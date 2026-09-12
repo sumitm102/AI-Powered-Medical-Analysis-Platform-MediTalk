@@ -79,8 +79,12 @@ app.use(
   })
 );
 app.use(express.json());
+
 app.use("/api/auth", authRoutes);
 app.use("/api/main", authRoutes);
+
+// Serve uploaded files as static assets
+// app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // ------------------- MongoDB Connection -------------------
 try {
@@ -201,6 +205,10 @@ app.get("/get-token", async (req, res) => {
 app.post("/api/analyze", upload.single("file"), async (req, res) => {
   try {
     const filePath = req.file.path;
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+
+    // const fileUrl = `http://localhost:${PORT}/uploads/${req.file.filename}`;
+    // console.log("File URL for AI:", fileUrl);
 
     // Convert to URL or use local path depending on AI service
     // const fileUrl = `file://${filePath}`; // or upload to S3 for public URL

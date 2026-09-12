@@ -29,8 +29,9 @@ class Assistant extends voice.Agent {
 
   // Called when the agent joins the room
   async onEnter(): Promise<void> {
+    const room = getJobContext().room;
     // Register a handler for incoming image streams
-    getJobContext().room.registerByteStreamHandler(
+    room.registerByteStreamHandler(
       "xray-image",
       async (stream: ByteStreamReader) => {
         const task = Task.from((controller) =>

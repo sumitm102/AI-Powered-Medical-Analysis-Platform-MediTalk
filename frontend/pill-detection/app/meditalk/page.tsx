@@ -245,6 +245,10 @@ export default function MediTalkAgent() {
   const [status, setStatus] = useState<ConnectionStatus>("Disconnected");
   const [participantID, setParticipantID] = useState<string | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const roomName = "meditalk-room";
   const username = "meditalk-user";
@@ -301,11 +305,6 @@ export default function MediTalkAgent() {
   /* -------------------------------
    File Upload + Preview
 -------------------------------- */
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  // const [uploadStatus, setUploadStatus] = useState<string | null>(null);
-  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -338,6 +337,19 @@ export default function MediTalkAgent() {
       // Display result in UI
       setAnalysisResult(result.description || JSON.stringify(result));
       setUploadStatus("Image analyzed successfully. Connecting to AI agent...");
+
+      if (roomInstance.localParticipant) {
+        try {
+          await roomInstance.localParticipant.sendText("x-ray analysis", {
+            topic: "xray-analysis", // Optional: use a topic to identify the message type
+          });
+          console.log("Analysis sent to AI agent via sendText");
+          setUploadStatus("Analysis sent to AI agent.");
+        } catch (err) {
+          console.error("Failed to send analysis to LiveKit:", err);
+          setUploadStatus("Failed to send analysis to AI agent");
+        }
+      }
 
       // --- Step 2: Send to LiveKit after analysis ---
       if (roomInstance.localParticipant) {
