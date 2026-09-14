@@ -32,11 +32,9 @@ MediTalk is an AI-driven platform designed to assist healthcare professionals an
 - **Frontend**:
   - Next.js (React-based)
   - Tailwind CSS for styling
-  - `next/image` for optimized images
-  - `@livekit/components-react` for real-time audio/video and voice assistant
 - **Backend**:
+  - Node
   - Express
-  - REST API endpoints for authentication and image analysis
   - MonogoDB
 - **AI/ML**:
   - Gemini
